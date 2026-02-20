@@ -167,6 +167,54 @@
         const maxSelect = document.getElementById('max-number');
         const feedbackOverlay = document.getElementById('feedback-overlay');
 
+        // Sound Effects (Web Audio API)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                // Cheerful major arpeggio
+                const now = audioCtx.currentTime;
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                osc.frequency.setValueAtTime(1046.50, now + 0.3); // C6
+                
+                gainNode.gain.setValueAtTime(0.3, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                
+                osc.start(now);
+                osc.stop(now + 0.6);
+            } else if (type === 'incorrect') {
+                // Gentle "bonk"
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.3);
+                
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            }
+        }
+
+        function speakNumber(num) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(num.toString());
+                utterance.rate = 0.9;
+                utterance.pitch = 1.2; // Slightly higher pitch for friendliness
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
         // Initialize selector
         for (let i = 1; i <= 20; i++) {
             const opt = document.createElement('option');
@@ -208,6 +256,8 @@
 
         function handleChoice(num) {
             if (num === currentCount) {
+                playSound('correct');
+                speakNumber(num);
                 confetti({
                     particleCount: 150,
                     spread: 70,
@@ -220,6 +270,7 @@
                     startNewRound();
                 }, 1500);
             } else {
+                playSound('incorrect');
                 emojiDisplay.classList.add('shake');
                 setTimeout(() => emojiDisplay.classList.remove('shake'), 400);
             }
