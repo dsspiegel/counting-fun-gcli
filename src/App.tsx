@@ -11,10 +11,15 @@ function App() {
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
 
   const startNewRound = () => {
-    const newCount = Math.floor(Math.random() * 5) + 1;
-    const newEmoji = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
-    setCount(newCount);
-    setEmoji(newEmoji);
+    setCount((prevCount) => {
+      let newCount;
+      do {
+        newCount = Math.floor(Math.random() * 5) + 1;
+      } while (newCount === prevCount);
+      return newCount;
+    });
+    
+    setEmoji(EMOJIS[Math.floor(Math.random() * EMOJIS.length)]);
     setFeedback(null);
   };
 
