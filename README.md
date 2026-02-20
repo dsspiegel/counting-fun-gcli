@@ -23,25 +23,23 @@ You can change the maximum number (from 1 up to 20) using the subtle selector in
 
 ## Development
 
-This project is built with **React**, **TypeScript**, and **Vite**.
+This is a lightweight, zero-dependency project built with vanilla **HTML**, **CSS**, and **JavaScript**.
 
 ### Running Locally
 
-```bash
-# Install dependencies
-npm install
+Since it's a single-file application, you can simply open `index.html` in any web browser. 
 
-# Start the development server
-npm run dev
+Alternatively, if you want to serve it using a local server (e.g., using Python):
+
+```bash
+python3 -m http.server
 ```
+
+Then visit `http://localhost:8000`.
 
 ### Deployment
 
-To deploy to GitHub Pages:
-
-```bash
-npm run deploy
-```
+The game is hosted on **GitHub Pages**. Simply push changes to the `main` branch, and GitHub will automatically update the live site.
 
 ---
 *Created with ❤️ for little learners.*
