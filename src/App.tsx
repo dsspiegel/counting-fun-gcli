@@ -1,31 +1,34 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './App.css';
 import confetti from 'canvas-confetti';
 
 const EMOJIS = ['🍎', '🚗', '🐶', '🌟', '🐱', '🦋', '🧸', '🍦', '🎈', '🐣'];
-const NUMBERS = [1, 2, 3, 4, 5];
 
 function App() {
+  const [maxNumber, setMaxNumber] = useState(5);
   const [count, setCount] = useState(1);
   const [emoji, setEmoji] = useState('🍎');
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
 
-  const startNewRound = () => {
+  const startNewRound = useCallback(() => {
     setCount((prevCount) => {
       let newCount;
+      // If the maxNumber is 1 (unlikely but safe), just return 1
+      if (maxNumber <= 1) return 1;
+      
       do {
-        newCount = Math.floor(Math.random() * 5) + 1;
+        newCount = Math.floor(Math.random() * maxNumber) + 1;
       } while (newCount === prevCount);
       return newCount;
     });
     
     setEmoji(EMOJIS[Math.floor(Math.random() * EMOJIS.length)]);
     setFeedback(null);
-  };
+  }, [maxNumber]);
 
   useEffect(() => {
     startNewRound();
-  }, []);
+  }, [startNewRound]);
 
   const handleChoice = (choice: number) => {
     if (choice === count) {
@@ -43,6 +46,8 @@ function App() {
     }
   };
 
+  const numbers = Array.from({ length: maxNumber }, (_, i) => i + 1);
+
   return (
     <div className="game-container">
       <h1 className="title">How many?</h1>
@@ -54,7 +59,7 @@ function App() {
       </div>
 
       <div className="button-container">
-        {NUMBERS.map((num) => (
+        {numbers.map((num) => (
           <button
             key={num}
             onClick={() => handleChoice(num)}
@@ -63,6 +68,19 @@ function App() {
             {num}
           </button>
         ))}
+      </div>
+
+      <div className="settings-panel">
+        <label htmlFor="max-number">Max Number: </label>
+        <select 
+          id="max-number" 
+          value={maxNumber} 
+          onChange={(e) => setMaxNumber(Number(e.target.value))}
+        >
+          <option value={3}>3</option>
+          <option value={5}>5</option>
+          <option value={10}>10</option>
+        </select>
       </div>
 
       {feedback === 'correct' && <div className="feedback-overlay">Great job! 🎉</div>}
