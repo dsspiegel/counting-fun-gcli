@@ -1,13 +1,236 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>counting-fun-gcli</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Counting Fun!</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f9ff;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', sans-serif;
+            overflow: hidden;
+        }
+
+        #game-container {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+        }
+
+        .title {
+            font-size: 3rem;
+            color: #333;
+            margin: 0;
+        }
+
+        #emoji-display {
+            min-height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 40px;
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            width: 100%;
+        }
+
+        .emoji-item {
+            font-size: 6rem;
+            animation: bounce 0.5s ease infinite alternate;
+            display: inline-block;
+        }
+
+        #button-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .number-button {
+            width: 100px;
+            height: 100px;
+            font-size: 3rem;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+            color: white;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .number-button:active { transform: scale(0.9); }
+
+        /* Colors 1-20 */
+        .color-1 { background-color: #ff6b6b; box-shadow: 0 6px #ee5253; }
+        .color-2 { background-color: #48dbfb; box-shadow: 0 6px #0abde3; }
+        .color-3 { background-color: #1dd1a1; box-shadow: 0 6px #10ac84; }
+        .color-4 { background-color: #a55eea; box-shadow: 0 6px #8854d0; }
+        .color-5 { background-color: #fa8231; box-shadow: 0 6px #e67e22; }
+        .color-6 { background-color: #eb3b5a; box-shadow: 0 6px #d1203f; }
+        .color-7 { background-color: #20bf6b; box-shadow: 0 6px #189654; }
+        .color-8 { background-color: #4b7bec; box-shadow: 0 6px #3867d6; }
+        .color-9 { background-color: #a55eea; box-shadow: 0 6px #8854d0; }
+        .color-10 { background-color: #778ca3; box-shadow: 0 6px #596a7d; }
+        .color-11 { background-color: #fc5c65; box-shadow: 0 6px #d63d47; }
+        .color-12 { background-color: #fd9644; box-shadow: 0 6px #e07b2b; }
+        .color-13 { background-color: #fed330; box-shadow: 0 6px #e6bb1e; }
+        .color-14 { background-color: #26de81; box-shadow: 0 6px #1ab968; }
+        .color-15 { background-color: #2bcbba; box-shadow: 0 6px #1ea898; }
+        .color-16 { background-color: #45aaf2; box-shadow: 0 6px #2d92db; }
+        .color-17 { background-color: #4b7bec; box-shadow: 0 6px #3867d6; }
+        .color-18 { background-color: #a55eea; box-shadow: 0 6px #8854d0; }
+        .color-19 { background-color: #d1d8e0; box-shadow: 0 6px #b0bbc6; color: #555; }
+        .color-20 { background-color: #778ca3; box-shadow: 0 6px #596a7d; }
+
+        #settings-panel {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            font-family: sans-serif;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #a0c0d6;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+        #settings-panel:hover { opacity: 1; }
+        #settings-panel select {
+            font-size: 0.8rem;
+            background: #f0f9ff;
+            border: 1px solid #cceeff;
+            color: #a0c0d6;
+            border-radius: 4px;
+        }
+
+        #feedback-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5rem;
+            color: #ff9f43;
+            pointer-events: none;
+            display: none;
+            z-index: 100;
+        }
+
+        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-15px); } }
+        @keyframes popIn { 0% { transform: translate(-50%, -50%) scale(0); opacity: 0; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+        .shake { animation: shake 0.4s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <h1 class="title">How many?</h1>
+        <div id="emoji-display"></div>
+        <div id="button-container"></div>
+    </div>
+
+    <div id="settings-panel">
+        <label for="max-number">Max: </label>
+        <select id="max-number"></select>
+    </div>
+
+    <div id="feedback-overlay">Great job! 🎉</div>
+
+    <script>
+        const EMOJIS = ['🍎', '🚗', '🐶', '🌟', '🐱', '🦋', '🧸', '🍦', '🎈', '🐣'];
+        let currentCount = 0;
+        let maxNumber = 5;
+
+        const emojiDisplay = document.getElementById('emoji-display');
+        const buttonContainer = document.getElementById('button-container');
+        const maxSelect = document.getElementById('max-number');
+        const feedbackOverlay = document.getElementById('feedback-overlay');
+
+        // Initialize selector
+        for (let i = 1; i <= 20; i++) {
+            const opt = document.createElement('option');
+            opt.value = i;
+            opt.textContent = i;
+            if (i === 5) opt.selected = true;
+            maxSelect.appendChild(opt);
+        }
+
+        function startNewRound() {
+            let nextCount;
+            do {
+                nextCount = Math.floor(Math.random() * maxNumber) + 1;
+            } while (nextCount === currentCount && maxNumber > 1);
+            
+            currentCount = nextCount;
+            const emoji = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+            
+            emojiDisplay.innerHTML = '';
+            for (let i = 0; i < currentCount; i++) {
+                const span = document.createElement('span');
+                span.className = 'emoji-item';
+                span.textContent = emoji;
+                emojiDisplay.appendChild(span);
+            }
+            renderButtons();
+        }
+
+        function renderButtons() {
+            buttonContainer.innerHTML = '';
+            for (let i = 1; i <= maxNumber; i++) {
+                const btn = document.createElement('button');
+                btn.className = `number-button color-${i}`;
+                btn.textContent = i;
+                btn.onclick = () => handleChoice(i);
+                buttonContainer.appendChild(btn);
+            }
+        }
+
+        function handleChoice(num) {
+            if (num === currentCount) {
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+                feedbackOverlay.style.display = 'block';
+                feedbackOverlay.style.animation = 'popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                setTimeout(() => {
+                    feedbackOverlay.style.display = 'none';
+                    startNewRound();
+                }, 1500);
+            } else {
+                emojiDisplay.classList.add('shake');
+                setTimeout(() => emojiDisplay.classList.remove('shake'), 400);
+            }
+        }
+
+        maxSelect.onchange = (e) => {
+            maxNumber = parseInt(e.target.value);
+            startNewRound();
+        };
+
+        startNewRound();
+    </script>
+</body>
 </html>
