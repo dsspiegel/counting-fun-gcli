@@ -1,35 +1,68 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from 'react';
+import './App.css';
+import confetti from 'canvas-confetti';
+
+const EMOJIS = ['🍎', '🚗', '🐶', '🌟', '🐱', '🦋', '🧸', '🍦', '🎈', '🐣'];
+const NUMBERS = [1, 2, 3];
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(1);
+  const [emoji, setEmoji] = useState('🍎');
+  const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
+
+  const startNewRound = () => {
+    const newCount = Math.floor(Math.random() * 3) + 1;
+    const newEmoji = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+    setCount(newCount);
+    setEmoji(newEmoji);
+    setFeedback(null);
+  };
+
+  useEffect(() => {
+    startNewRound();
+  }, []);
+
+  const handleChoice = (choice: number) => {
+    if (choice === count) {
+      setFeedback('correct');
+      confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#FFD700', '#FF69B4', '#00CED1', '#ADFF2F']
+      });
+      setTimeout(startNewRound, 1500);
+    } else {
+      setFeedback('incorrect');
+      setTimeout(() => setFeedback(null), 500);
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="game-container">
+      <h1 className="title">How many?</h1>
+      
+      <div className={`emoji-display ${feedback === 'incorrect' ? 'shake' : ''}`}>
+        {Array.from({ length: count }).map((_, i) => (
+          <span key={i} className="emoji-item">{emoji}</span>
+        ))}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+
+      <div className="button-container">
+        {NUMBERS.map((num) => (
+          <button
+            key={num}
+            onClick={() => handleChoice(num)}
+            className={`number-button color-${num}`}
+          >
+            {num}
+          </button>
+        ))}
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+
+      {feedback === 'correct' && <div className="feedback-overlay">Great job! 🎉</div>}
+    </div>
+  );
 }
 
-export default App
+export default App;
