@@ -73,10 +73,14 @@
 .color-1 { background-color: #ff6b6b; box-shadow: 0 8px #ee5253; }
 .color-2 { background-color: #48dbfb; box-shadow: 0 8px #0abde3; }
 .color-3 { background-color: #1dd1a1; box-shadow: 0 8px #10ac84; }
+.color-4 { background-color: #a55eea; box-shadow: 0 8px #8854d0; }
+.color-5 { background-color: #fa8231; box-shadow: 0 8px #e67e22; }
 
 .color-1:hover { background-color: #ff5e5e; }
 .color-2:hover { background-color: #34d5f8; }
 .color-3:hover { background-color: #19c094; }
+.color-4:hover { background-color: #9d4edd; }
+.color-5:hover { background-color: #f37525; }
 
 .feedback-overlay {
   position: fixed;

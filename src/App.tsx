@@ -3,7 +3,7 @@ import './App.css';
 import confetti from 'canvas-confetti';
 
 const EMOJIS = ['🍎', '🚗', '🐶', '🌟', '🐱', '🦋', '🧸', '🍦', '🎈', '🐣'];
-const NUMBERS = [1, 2, 3];
+const NUMBERS = [1, 2, 3, 4, 5];
 
 function App() {
   const [count, setCount] = useState(1);
@@ -11,7 +11,7 @@ function App() {
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
 
   const startNewRound = () => {
-    const newCount = Math.floor(Math.random() * 3) + 1;
+    const newCount = Math.floor(Math.random() * 5) + 1;
     const newEmoji = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
     setCount(newCount);
     setEmoji(newEmoji);
