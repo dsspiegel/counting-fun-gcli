@@ -1,73 +1,45 @@
-# React + TypeScript + Vite
+# Counting Fun! 🍎🚗🐶
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A simple, colorful web game designed for toddlers to practice counting and number recognition.
 
-Currently, two official plugins are available:
+The game flashes a random number of fun emojis (like apples, cars, or puppies), and the player simply clicks the matching number button. It's designed to be frustration-free with bouncy animations and positive feedback.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+*   **Toddler-Friendly UI:** Large, easy-to-tap buttons and high-contrast colors.
+*   **Adjustable Difficulty:** Start with numbers 1-3 and scale up to 20 as they learn.
+*   **Engaging Feedback:** Confetti celebrations for correct answers and gentle "shake" animations for incorrect ones.
+*   **Responsive:** Works great on tablets and desktops.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## How to Play
 
-## Expanding the ESLint configuration
+1.  Look at the screen to see how many items appear.
+2.  Click the button with the matching number.
+3.  Celebrate with confetti! 🎉
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+You can change the maximum number (from 1 up to 20) using the subtle selector in the bottom-left corner.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Development
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+This project is built with **React**, **TypeScript**, and **Vite**.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Running Locally
+
+```bash
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Deployment
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+To deploy to GitHub Pages:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run deploy
 ```
+
+---
+*Created with ❤️ for little learners.*
