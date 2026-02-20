@@ -1,0 +1,27 @@
+<svg width="800" height="300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="#f0f9ff"/>
+  
+  <!-- Decorative Circles -->
+  <circle cx="50" cy="50" r="30" fill="#ff6b6b" opacity="0.2"/>
+  <circle cx="750" cy="250" r="40" fill="#48dbfb" opacity="0.2"/>
+  <circle cx="100" cy="250" r="20" fill="#1dd1a1" opacity="0.2"/>
+  <circle cx="700" cy="50" r="30" fill="#feca57" opacity="0.2"/>
+
+  <!-- Main Title -->
+  <text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" font-family="'Comic Sans MS', 'Chalkboard SE', sans-serif" font-size="60" fill="#333" font-weight="bold">Counting Fun!</text>
+  
+  <!-- Subtitle -->
+  <text x="50%" y="65%" dominant-baseline="middle" text-anchor="middle" font-family="'Comic Sans MS', 'Chalkboard SE', sans-serif" font-size="24" fill="#666">A game for little learners</text>
+
+  <!-- Emojis (using text for simplicity in SVG) -->
+  <text x="150" y="150" font-size="60" text-anchor="middle" transform="rotate(-15 150 150)">🍎</text>
+  <text x="650" y="150" font-size="60" text-anchor="middle" transform="rotate(15 650 150)">🚗</text>
+  <text x="400" y="240" font-size="50" text-anchor="middle">🐶</text>
+  <text x="400" y="70" font-size="50" text-anchor="middle">🌟</text>
+
+  <!-- Numbers -->
+  <text x="50" y="180" font-family="sans-serif" font-size="40" fill="#ff9f43" font-weight="bold" transform="rotate(-20 50 180)">1</text>
+  <text x="750" y="120" font-family="sans-serif" font-size="40" fill="#5f27cd" font-weight="bold" transform="rotate(20 750 120)">2</text>
+  <text x="250" y="260" font-family="sans-serif" font-size="40" fill="#ff6b6b" font-weight="bold">3</text>
+</svg>

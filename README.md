@@ -1,3 +1,5 @@
+![Counting Fun Banner](banner.svg)
+
 # Counting Fun! 🍎🚗🐶
 
 A simple, colorful web game designed for toddlers to practice counting and number recognition.
