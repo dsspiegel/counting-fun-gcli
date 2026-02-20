@@ -71,15 +71,15 @@ function App() {
       </div>
 
       <div className="settings-panel">
-        <label htmlFor="max-number">Max Number: </label>
+        <label htmlFor="max-number">Max: </label>
         <select 
           id="max-number" 
           value={maxNumber} 
           onChange={(e) => setMaxNumber(Number(e.target.value))}
         >
-          <option value={3}>3</option>
-          <option value={5}>5</option>
-          <option value={10}>10</option>
+          {Array.from({ length: 20 }, (_, i) => i + 1).map(num => (
+            <option key={num} value={num}>{num}</option>
+          ))}
         </select>
       </div>
 
