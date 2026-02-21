@@ -227,13 +227,18 @@
             }
         }
 
-        function speakNumber(num) {
-            if ('speechSynthesis' in window) {
-                // Cancel any currently playing speech to prevent queue backup
-                window.speechSynthesis.cancel();
+        function showFeedback(num) {
+            const phrases = ['Great job!', 'Good job!', 'Excellent!', 'Well done!', 'You got it!', 'Super!', 'Fantastic!'];
+            const phrase = phrases[Math.floor(Math.random() * phrases.length)];
+            
+            // Visual Feedback
+            feedbackOverlay.textContent = `${phrase} 🎉`;
+            feedbackOverlay.style.display = 'block';
+            feedbackOverlay.style.animation = 'popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
 
-                const phrases = ['Great job!', 'Good job!', 'Excellent!', 'Well done!', 'You got it!'];
-                const phrase = phrases[Math.floor(Math.random() * phrases.length)];
+            // Audio Feedback (Voice)
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(`${num}. ${phrase}`);
                 utterance.rate = 0.9;
                 utterance.pitch = 1.2;
@@ -291,14 +296,13 @@
             if (num === currentCount) {
                 isTransitioning = true; // Lock input
                 playSound('correct');
-                speakNumber(num);
+                showFeedback(num);
                 confetti({
                     particleCount: 150,
                     spread: 70,
                     origin: { y: 0.6 }
                 });
-                feedbackOverlay.style.display = 'block';
-                feedbackOverlay.style.animation = 'popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                
                 setTimeout(() => {
                     feedbackOverlay.style.display = 'none';
                     startNewRound();
