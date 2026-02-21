@@ -15,7 +15,8 @@
             min-height: 100vh;
             background-color: #f0f9ff;
             font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', sans-serif;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto; /* Allow vertical scrolling on small screens */
         }
 
         #game-container {
@@ -76,9 +77,12 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .number-button:active { transform: scale(0.9); }
+        .number-button:disabled { opacity: 0.7; cursor: default; transform: none; }
 
         /* Colors 1-20 */
         .color-1 { background-color: #ff6b6b; box-shadow: 0 6px #ee5253; }
@@ -114,6 +118,7 @@
             color: #a0c0d6;
             opacity: 0.6;
             transition: opacity 0.2s;
+            z-index: 50;
         }
         #settings-panel:hover { opacity: 1; }
         #settings-panel select {
@@ -140,27 +145,35 @@
         @keyframes popIn { 0% { transform: translate(-50%, -50%) scale(0); opacity: 0; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
         .shake { animation: shake 0.4s; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+        
+        /* Mobile adjustment for title */
+        @media (max-width: 600px) {
+            .title { font-size: 2rem; }
+            .emoji-item { font-size: 4rem; }
+            .number-button { width: 70px; height: 70px; font-size: 2rem; }
+        }
     </style>
 </head>
 <body>
 
     <div id="game-container">
         <h1 class="title">How many?</h1>
-        <div id="emoji-display"></div>
-        <div id="button-container"></div>
+        <div id="emoji-display" aria-live="polite" aria-label="Game area displaying items to count"></div>
+        <div id="button-container" role="group" aria-label="Number options"></div>
     </div>
 
     <div id="settings-panel">
         <label for="max-number">Max: </label>
-        <select id="max-number"></select>
+        <select id="max-number" aria-label="Maximum number selector"></select>
     </div>
 
-    <div id="feedback-overlay">Great job! 🎉</div>
+    <div id="feedback-overlay" aria-live="assertive">Great job! 🎉</div>
 
     <script>
         const EMOJIS = ['🍎', '🚗', '🐶', '🌟', '🐱', '🦋', '🧸', '🍦', '🎈', '🐣'];
         let currentCount = 0;
         let maxNumber = 5;
+        let isTransitioning = false; // Prevents race conditions
 
         const emojiDisplay = document.getElementById('emoji-display');
         const buttonContainer = document.getElementById('button-container');
@@ -170,8 +183,18 @@
         // Sound Effects (Web Audio API)
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
+        function resumeAudio() {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+        
+        // Resume audio on any interaction
+        window.addEventListener('click', resumeAudio, { once: true });
+        window.addEventListener('touchstart', resumeAudio, { once: true });
+
         function playSound(type) {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
+            resumeAudio();
             const osc = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
             
@@ -179,7 +202,6 @@
             gainNode.connect(audioCtx.destination);
 
             if (type === 'correct') {
-                // Cheerful major arpeggio
                 const now = audioCtx.currentTime;
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(523.25, now); // C5
@@ -193,7 +215,6 @@
                 osc.start(now);
                 osc.stop(now + 0.6);
             } else if (type === 'incorrect') {
-                // Gentle "bonk"
                 osc.type = 'triangle';
                 osc.frequency.setValueAtTime(150, audioCtx.currentTime);
                 osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.3);
@@ -208,6 +229,9 @@
 
         function speakNumber(num) {
             if ('speechSynthesis' in window) {
+                // Cancel any currently playing speech to prevent queue backup
+                window.speechSynthesis.cancel();
+
                 const phrases = ['Great job!', 'Good job!', 'Excellent!', 'Well done!', 'You got it!'];
                 const phrase = phrases[Math.floor(Math.random() * phrases.length)];
                 const utterance = new SpeechSynthesisUtterance(`${num}. ${phrase}`);
@@ -235,7 +259,10 @@
             currentCount = nextCount;
             const emoji = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
             
+            // Update aria-label for screen readers
+            emojiDisplay.setAttribute('aria-label', `${currentCount} ${emoji}`);
             emojiDisplay.innerHTML = '';
+            
             for (let i = 0; i < currentCount; i++) {
                 const span = document.createElement('span');
                 span.className = 'emoji-item';
@@ -243,6 +270,7 @@
                 emojiDisplay.appendChild(span);
             }
             renderButtons();
+            isTransitioning = false; // Ready for input
         }
 
         function renderButtons() {
@@ -251,13 +279,17 @@
                 const btn = document.createElement('button');
                 btn.className = `number-button color-${i}`;
                 btn.textContent = i;
+                btn.setAttribute('aria-label', `Number ${i}`);
                 btn.onclick = () => handleChoice(i);
                 buttonContainer.appendChild(btn);
             }
         }
 
         function handleChoice(num) {
+            if (isTransitioning) return; // Ignore clicks during animation
+
             if (num === currentCount) {
+                isTransitioning = true; // Lock input
                 playSound('correct');
                 speakNumber(num);
                 confetti({
@@ -283,6 +315,7 @@
             startNewRound();
         };
 
+        // Initial Start
         startNewRound();
     </script>
 </body>
