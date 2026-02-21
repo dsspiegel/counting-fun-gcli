@@ -208,9 +208,11 @@
 
         function speakNumber(num) {
             if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(num.toString());
+                const phrases = ['Great job!', 'Good job!', 'Excellent!', 'Well done!', 'You got it!'];
+                const phrase = phrases[Math.floor(Math.random() * phrases.length)];
+                const utterance = new SpeechSynthesisUtterance(`${num}. ${phrase}`);
                 utterance.rate = 0.9;
-                utterance.pitch = 1.2; // Slightly higher pitch for friendliness
+                utterance.pitch = 1.2;
                 window.speechSynthesis.speak(utterance);
             }
         }
