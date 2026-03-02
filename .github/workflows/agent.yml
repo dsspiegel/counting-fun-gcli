@@ -46,8 +46,6 @@ jobs:
     uses: gnovak/remote-dev-bot/.github/workflows/remote-dev-bot.yml@main
     with:
       rdb_ref: main
-      default_model: gemini/gemini-pro
-      llm_api_key: ${{ secrets.GEMINI_API_KEY }}
     secrets:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
